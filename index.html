@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Wave Packet Builder</title>
+
+  <!-- Plotly creates the interactive plots -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+  <style>
+    :root {
+      --osu-blue: #156082;
+      --light-blue: #eaf4f8;
+      --border: #c7d3da;
+      --text: #1f2933;
+      --muted: #5a6872;
+      --background: #f5f7f8;
+      --panel: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Calibri, Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--background);
+    }
+
+    header {
+      padding: 24px 32px;
+      color: white;
+      background: var(--osu-blue);
+    }
+
+    header h1 {
+      margin: 0 0 6px 0;
+      font-size: 2rem;
+    }
+
+    header p {
+      max-width: 950px;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      gap: 20px;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06);
+    }
+
+    .controls {
+      padding: 20px;
+      align-self: start;
+      position: sticky;
+      top: 12px;
+    }
+
+    .content {
+      padding: 20px;
+      min-width: 0;
+    }
+
+    h2 {
+      color: var(--osu-blue);
+      margin-top: 0;
+    }
+
+    h3 {
+      margin: 24px 0 12px 0;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+      color: var(--osu-blue);
+    }
+
+    .control {
+      margin-bottom: 18px;
+    }
+
+    .control label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select {
+      padding: 8px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    input[type="range"] {
+      accent-color: var(--osu-blue);
+    }
+
+    .range-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .value {
+      min-width: 62px;
+      padding: 4px 7px;
+      color: var(--osu-blue);
+      text-align: center;
+      font-weight: 700;
+      background: var(--light-blue);
+      border-radius: 4px;
+    }
+
+    .checkbox-line {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-line input {
+      accent-color: var(--osu-blue);
+    }
+
+    .checkbox-line label {
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .description {
+      margin-top: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .equation {
+      margin: 12px 0 18px 0;
+      padding: 12px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 1.25rem;
+      background: var(--light-blue);
+      border-left: 4px solid var(--osu-blue);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      padding: 14px;
+      text-align: center;
+      background: white;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--osu-blue);
+      border-radius: 6px;
+    }
+
+    .metric-label {
+   
