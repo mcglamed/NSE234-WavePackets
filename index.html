@@ -10,17 +10,14 @@
 
   <title>Wave Packet Builder</title>
 
-  <!-- Plotly creates the interactive plots -->
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-
   <style>
     :root {
-      --osu-blue: #156082;
+      --blue: #156082;
       --light-blue: #eaf4f8;
-      --border: #c7d3da;
+      --border: #c9d4da;
       --text: #1f2933;
-      --muted: #5a6872;
-      --background: #f5f7f8;
+      --muted: #5c6870;
+      --background: #f4f6f7;
       --panel: #ffffff;
     }
 
@@ -38,23 +35,23 @@
     header {
       padding: 24px 32px;
       color: white;
-      background: var(--osu-blue);
+      background: var(--blue);
     }
 
     header h1 {
-      margin: 0 0 6px 0;
+      margin: 0 0 8px 0;
       font-size: 2rem;
     }
 
     header p {
       max-width: 950px;
       margin: 0;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
-    .app-layout {
+    .app-container {
       display: grid;
-      grid-template-columns: 310px minmax(0, 1fr);
+      grid-template-columns: 320px minmax(0, 1fr);
       gap: 20px;
       max-width: 1500px;
       margin: 0 auto;
@@ -69,19 +66,23 @@
     }
 
     .controls {
-      padding: 20px;
       align-self: start;
+      padding: 20px;
       position: sticky;
       top: 12px;
     }
 
     .content {
-      padding: 20px;
       min-width: 0;
+      padding: 20px;
+    }
+
+    h2,
+    h3 {
+      color: var(--blue);
     }
 
     h2 {
-      color: var(--osu-blue);
       margin-top: 0;
     }
 
@@ -89,14 +90,13 @@
       margin: 24px 0 12px 0;
       padding-bottom: 5px;
       border-bottom: 1px solid var(--border);
-      color: var(--osu-blue);
     }
 
     .control {
       margin-bottom: 18px;
     }
 
-    .control label {
+    .control-label {
       display: block;
       margin-bottom: 7px;
       font-weight: 700;
@@ -109,13 +109,16 @@
 
     select {
       padding: 8px;
+      font-family: inherit;
+      font-size: 1rem;
       background: white;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 5px;
     }
 
-    input[type="range"] {
-      accent-color: var(--osu-blue);
+    input[type="range"],
+    input[type="checkbox"] {
+      accent-color: var(--blue);
     }
 
     .range-line {
@@ -124,10 +127,10 @@
       gap: 10px;
     }
 
-    .value {
-      min-width: 62px;
+    .value-box {
+      min-width: 64px;
       padding: 4px 7px;
-      color: var(--osu-blue);
+      color: var(--blue);
       text-align: center;
       font-weight: 700;
       background: var(--light-blue);
@@ -141,46 +144,1425 @@
       margin-bottom: 12px;
     }
 
-    .checkbox-line input {
-      accent-color: var(--osu-blue);
-    }
-
     .checkbox-line label {
-      margin: 0;
-      font-weight: 400;
-    }
-
-    .description {
-      margin-top: 0;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .equation {
-      margin: 12px 0 18px 0;
-      padding: 12px;
-      text-align: center;
-      font-family: "Times New Roman", serif;
-      font-size: 1.25rem;
-      background: var(--light-blue);
-      border-left: 4px solid var(--osu-blue);
+      line-height: 1.25;
     }
 
     .metrics {
       display: grid;
       grid-template-columns: repeat(4, minmax(130px, 1fr));
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 24px;
     }
 
     .metric {
       padding: 14px;
       text-align: center;
-      background: white;
       border: 1px solid var(--border);
-      border-top: 4px solid var(--osu-blue);
+      border-top: 4px solid var(--blue);
       border-radius: 6px;
+      background: white;
     }
 
     .metric-label {
-   
+      min-height: 36px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      color: var(--blue);
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .equation {
+      margin: 12px 0 20px 0;
+      padding: 12px;
+      text-align: center;
+      font-family: "Times New Roman", serif;
+      font-size: 1.2rem;
+      background: var(--light-blue);
+      border-left: 4px solid var(--blue);
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 540px;
+      background: white;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    #squaredSection {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 4px 0;
+    }
+
+    button {
+      padding: 9px 14px;
+      color: white;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--blue);
+      border: 1px solid var(--blue);
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #0f4c68;
+    }
+
+    details {
+      margin-top: 24px;
+      padding: 14px;
+      background: #fbfcfc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    summary {
+      color: var(--blue);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .questions {
+      margin-top: 24px;
+      padding: 18px 22px;
+      background: var(--light-blue);
+      border-left: 5px solid var(--blue);
+    }
+
+    .questions li {
+      margin-bottom: 9px;
+      line-height: 1.45;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px;
+      line-height: 1.5;
+      background: #fff8db;
+      border: 1px solid #e6d78c;
+      border-radius: 6px;
+    }
+
+    footer {
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        position: static;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(130px, 1fr));
+      }
+
+      .canvas-container {
+        height: 430px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      header {
+        padding: 18px;
+      }
+
+      .app-container {
+        padding: 10px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .canvas-container {
+        height: 360px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Wave Packet Builder</h1>
+
+    <p>
+      Explore how wave superposition and modulation produce localized
+      wave packets. Adjust the wavelength distribution and observe how
+      spectral width affects spatial localization.
+    </p>
+  </header>
+
+  <main class="app-container">
+    <aside class="panel controls">
+      <h2>Wave Parameters</h2>
+
+      <div class="control">
+        <label class="control-label" for="plotType">
+          Plot type
+        </label>
+
+        <select id="plotType">
+          <option value="single">Single Wave</option>
+          <option value="two">Two-Wave Superposition</option>
+          <option value="nwave" selected>N-Wave Superposition</option>
+          <option value="sinc">Sinc-Modulated Wave</option>
+          <option value="gaussian">Gaussian-Modulated Wave</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label class="control-label" for="amplitude">
+          Amplitude, A
+        </label>
+
+        <div class="range-line">
+          <input
+            id="amplitude"
+            type="range"
+            min="0.1"
+            max="5"
+            value="1"
+            step="0.1"
+          >
+
+          <span id="amplitudeValue" class="value-box">1.0</span>
+        </div>
+      </div>
+
+      <div class="control">
+        <label class="control-label" for="wavelength">
+          Central wavelength, λ₀
+        </label>
+
+        <div class="range-line">
+          <input
+            id="wavelength"
+            type="range"
+            min="1"
+            max="30"
+            value="10"
+            step="0.1"
+          >
+
+          <span id="wavelengthValue" class="value-box">10.0</span>
+        </div>
+      </div>
+
+      <div class="control">
+        <label class="control-label" for="deltaLambda">
+          Wavelength bandwidth, Δλ
+        </label>
+
+        <div class="range-line">
+          <input
+            id="deltaLambda"
+            type="range"
+            min="0.01"
+            max="10"
+            value="1"
+            step="0.01"
+          >
+
+          <span id="deltaLambdaValue" class="value-box">1.00</span>
+        </div>
+      </div>
+
+      <div class="control" id="numberWavesControl">
+        <label class="control-label" for="numberWaves">
+          Number of component waves, N
+        </label>
+
+        <div class="range-line">
+          <input
+            id="numberWaves"
+            type="range"
+            min="2"
+            max="100"
+            value="10"
+            step="1"
+          >
+
+          <span id="numberWavesValue" class="value-box">10</span>
+        </div>
+      </div>
+
+      <h3>Display Options</h3>
+
+      <div class="checkbox-line">
+        <input id="showComponents" type="checkbox">
+        <label for="showComponents">Show component waves</label>
+      </div>
+
+      <div class="checkbox-line">
+        <input id="showEnvelope" type="checkbox" checked>
+        <label for="showEnvelope">Show envelope</label>
+      </div>
+
+      <div class="checkbox-line">
+        <input id="normalizeSum" type="checkbox" checked>
+        <label for="normalizeSum">Normalize superposition</label>
+      </div>
+
+      <div class="checkbox-line">
+        <input id="showSquared" type="checkbox">
+        <label for="showSquared">
+          Show squared amplitude |ψ|²
+        </label>
+      </div>
+
+      <h3>Plot Range</h3>
+
+      <div class="control">
+        <label class="control-label" for="xLimit">
+          Position range, ±x
+        </label>
+
+        <div class="range-line">
+          <input
+            id="xLimit"
+            type="range"
+            min="20"
+            max="300"
+            value="100"
+            step="10"
+          >
+
+          <span id="xLimitValue" class="value-box">100</span>
+        </div>
+      </div>
+    </aside>
+
+    <section class="panel content">
+      <h2>Spectral and Spatial Scales</h2>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">Relative bandwidth, Δλ/λ₀</div>
+          <div id="relativeBandwidth" class="metric-value">0.100</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Wave-number width, Δk</div>
+          <div id="deltaK" class="metric-value">0.0630</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Characteristic width, 1/Δk</div>
+          <div id="characteristicWidth" class="metric-value">15.876</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Cycles within width</div>
+          <div id="cyclesWithinWidth" class="metric-value">1.588</div>
+        </div>
+      </div>
+
+      <h2 id="plotHeading">Superposition of 10 Waves</h2>
+
+      <div id="equation" class="equation">
+        ψ(x) = Σᵢ₌₁ᴺ A cos(2πx/λᵢ)
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="waveCanvas"></canvas>
+      </div>
+
+      <div class="button-row">
+        <button id="downloadWaveButton" type="button">
+          Download Wave Plot
+        </button>
+      </div>
+
+      <section id="squaredSection">
+        <h2>Squared Wave Amplitude</h2>
+
+        <div class="canvas-container">
+          <canvas id="squaredCanvas"></canvas>
+        </div>
+
+        <div class="button-row">
+          <button id="downloadSquaredButton" type="button">
+            Download Squared-Amplitude Plot
+          </button>
+        </div>
+      </section>
+
+      <details>
+        <summary>Calculation details</summary>
+
+        <p>
+          Wave number is related to wavelength by
+          <strong>k = 2π/λ</strong>.
+        </p>
+
+        <div class="equation">
+          Δk =
+          2π/(λ₀ − Δλ/2)
+          −
+          2π/(λ₀ + Δλ/2)
+        </div>
+
+        <p>
+          When Δλ is much smaller than λ₀:
+        </p>
+
+        <div class="equation">
+          Δk ≈ 2πΔλ/λ₀²
+        </div>
+
+        <p id="calculationValues"></p>
+
+        <p>
+          The quantity 1/Δk is a useful characteristic localization
+          scale. Widths based on standard deviation, full width at half
+          maximum, or the first zeros will differ by numerical factors.
+        </p>
+      </details>
+
+      <div class="questions">
+        <h2>Questions to Consider</h2>
+
+        <ol>
+          <li>
+            What happens to the spatial width when
+            <strong>Δλ increases</strong>?
+          </li>
+
+          <li>
+            What happens when <strong>N increases</strong> while the
+            total wavelength bandwidth remains constant?
+          </li>
+
+          <li>
+            Why is a single monochromatic wave not spatially localized?
+          </li>
+
+          <li>
+            How is wavelength spread related to wave-number spread?
+          </li>
+
+          <li>
+            How does the relationship between spatial width and
+            wave-number width lead to the position-momentum uncertainty
+            relationship?
+          </li>
+        </ol>
+      </div>
+
+      <div class="note">
+        <strong>Key idea:</strong> A spatially localized wave packet
+        requires a range of wavelengths or wave numbers. Greater
+        wave-number spread generally permits stronger spatial
+        localization.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    NSE 234 Wave Packet Demonstration
+  </footer>
+
+  <script>
+    "use strict";
+
+    const elements = {
+      plotType: document.getElementById("plotType"),
+      amplitude: document.getElementById("amplitude"),
+      wavelength: document.getElementById("wavelength"),
+      deltaLambda: document.getElementById("deltaLambda"),
+      numberWaves: document.getElementById("numberWaves"),
+      showComponents: document.getElementById("showComponents"),
+      showEnvelope: document.getElementById("showEnvelope"),
+      normalizeSum: document.getElementById("normalizeSum"),
+      showSquared: document.getElementById("showSquared"),
+      xLimit: document.getElementById("xLimit"),
+
+      amplitudeValue: document.getElementById("amplitudeValue"),
+      wavelengthValue: document.getElementById("wavelengthValue"),
+      deltaLambdaValue: document.getElementById("deltaLambdaValue"),
+      numberWavesValue: document.getElementById("numberWavesValue"),
+      xLimitValue: document.getElementById("xLimitValue"),
+
+      numberWavesControl:
+        document.getElementById("numberWavesControl"),
+
+      relativeBandwidth:
+        document.getElementById("relativeBandwidth"),
+
+      deltaK:
+        document.getElementById("deltaK"),
+
+      characteristicWidth:
+        document.getElementById("characteristicWidth"),
+
+      cyclesWithinWidth:
+        document.getElementById("cyclesWithinWidth"),
+
+      plotHeading: document.getElementById("plotHeading"),
+      equation: document.getElementById("equation"),
+
+      waveCanvas: document.getElementById("waveCanvas"),
+      squaredCanvas: document.getElementById("squaredCanvas"),
+      squaredSection: document.getElementById("squaredSection"),
+
+      calculationValues:
+        document.getElementById("calculationValues"),
+
+      downloadWaveButton:
+        document.getElementById("downloadWaveButton"),
+
+      downloadSquaredButton:
+        document.getElementById("downloadSquaredButton")
+    };
+
+
+    function linspace(start, stop, numberPoints) {
+      const values = new Array(numberPoints);
+      const step = (stop - start) / (numberPoints - 1);
+
+      for (let i = 0; i < numberPoints; i++) {
+        values[i] = start + i * step;
+      }
+
+      return values;
+    }
+
+
+    function generateWave(amplitude, wavelength, xValues) {
+      return xValues.map(
+        x => amplitude * Math.cos(2 * Math.PI * x / wavelength)
+      );
+    }
+
+
+    function normalizedSinc(value) {
+      if (Math.abs(value) < 1e-12) {
+        return 1;
+      }
+
+      return Math.sin(Math.PI * value) / (Math.PI * value);
+    }
+
+
+    function sincEnvelope(
+      amplitude,
+      deltaLambda,
+      wavelength,
+      xValues
+    ) {
+      /*
+       * This form preserves the envelope shape from the original
+       * expression while making its central height equal to A.
+       */
+      return xValues.map(
+        x => amplitude * normalizedSinc(
+          deltaLambda * x / Math.pow(wavelength, 2)
+        )
+      );
+    }
+
+
+    function gaussianEnvelope(
+      amplitude,
+      deltaLambda,
+      wavelength,
+      xValues
+    ) {
+      return xValues.map(x => {
+        const argument =
+          deltaLambda *
+          Math.PI *
+          x /
+          Math.pow(wavelength, 2);
+
+        return amplitude * Math.exp(-2 * Math.pow(argument, 2));
+      });
+    }
+
+
+    function createWavelengths(
+      centerWavelength,
+      bandwidth,
+      numberWaves
+    ) {
+      return linspace(
+        centerWavelength - bandwidth / 2,
+        centerWavelength + bandwidth / 2,
+        numberWaves
+      );
+    }
+
+
+    function sumArrays(arrays) {
+      const result = new Array(arrays[0].length).fill(0);
+
+      for (const array of arrays) {
+        for (let i = 0; i < array.length; i++) {
+          result[i] += array[i];
+        }
+      }
+
+      return result;
+    }
+
+
+    function multiplyArrays(firstArray, secondArray) {
+      return firstArray.map(
+        (value, index) => value * secondArray[index]
+      );
+    }
+
+
+    function divideArray(array, divisor) {
+      return array.map(value => value / divisor);
+    }
+
+
+    function findMaximumAbsoluteValue(arrays) {
+      let maximum = 0;
+
+      for (const array of arrays) {
+        if (!array) {
+          continue;
+        }
+
+        for (const value of array) {
+          const absoluteValue = Math.abs(value);
+
+          if (absoluteValue > maximum) {
+            maximum = absoluteValue;
+          }
+        }
+      }
+
+      return maximum > 0 ? maximum : 1;
+    }
+
+
+    function setupCanvas(canvas) {
+      const rectangle = canvas.getBoundingClientRect();
+      const pixelRatio = window.devicePixelRatio || 1;
+
+      canvas.width = Math.max(
+        1,
+        Math.round(rectangle.width * pixelRatio)
+      );
+
+      canvas.height = Math.max(
+        1,
+        Math.round(rectangle.height * pixelRatio)
+      );
+
+      const context = canvas.getContext("2d");
+
+      context.setTransform(
+        pixelRatio,
+        0,
+        0,
+        pixelRatio,
+        0,
+        0
+      );
+
+      return {
+        context: context,
+        width: rectangle.width,
+        height: rectangle.height
+      };
+    }
+
+
+    function xToPixel(x, xMinimum, xMaximum, left, right) {
+      return left +
+        ((x - xMinimum) / (xMaximum - xMinimum)) *
+        (right - left);
+    }
+
+
+    function yToPixel(y, yMinimum, yMaximum, top, bottom) {
+      return bottom -
+        ((y - yMinimum) / (yMaximum - yMinimum)) *
+        (bottom - top);
+    }
+
+
+    function drawPolyline(
+      context,
+      xValues,
+      yValues,
+      plot,
+      color,
+      lineWidth,
+      dashPattern
+    ) {
+      context.save();
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
+      context.setLineDash(dashPattern || []);
+      context.beginPath();
+
+      for (let i = 0; i < xValues.length; i++) {
+        const pixelX = xToPixel(
+          xValues[i],
+          plot.xMinimum,
+          plot.xMaximum,
+          plot.left,
+          plot.right
+        );
+
+        const pixelY = yToPixel(
+          yValues[i],
+          plot.yMinimum,
+          plot.yMaximum,
+          plot.top,
+          plot.bottom
+        );
+
+        if (i === 0) {
+          context.moveTo(pixelX, pixelY);
+        } else {
+          context.lineTo(pixelX, pixelY);
+        }
+      }
+
+      context.stroke();
+      context.restore();
+    }
+
+
+    function formatTick(value, range) {
+      if (Math.abs(value) < range * 1e-10) {
+        return "0";
+      }
+
+      if (range >= 100) {
+        return value.toFixed(0);
+      }
+
+      if (range >= 10) {
+        return value.toFixed(1);
+      }
+
+      return value.toFixed(2);
+    }
+
+
+    function drawAxes(
+      context,
+      width,
+      height,
+      plot,
+      title,
+      xLabel,
+      yLabel
+    ) {
+      context.save();
+      context.fillStyle = "white";
+      context.fillRect(0, 0, width, height);
+
+      context.strokeStyle = "black";
+      context.lineWidth = 1;
+      context.strokeRect(
+        plot.left,
+        plot.top,
+        plot.right - plot.left,
+        plot.bottom - plot.top
+      );
+
+      context.font = "15px Calibri, Arial, sans-serif";
+      context.fillStyle = "black";
+      context.textAlign = "center";
+      context.textBaseline = "top";
+
+      const xTickNumber = 8;
+      const xRange = plot.xMaximum - plot.xMinimum;
+
+      for (let i = 0; i <= xTickNumber; i++) {
+        const value =
+          plot.xMinimum + xRange * i / xTickNumber;
+
+        const pixelX = xToPixel(
+          value,
+          plot.xMinimum,
+          plot.xMaximum,
+          plot.left,
+          plot.right
+        );
+
+        context.beginPath();
+        context.moveTo(pixelX, plot.bottom);
+        context.lineTo(pixelX, plot.bottom + 6);
+        context.stroke();
+
+        context.fillText(
+          formatTick(value, xRange),
+          pixelX,
+          plot.bottom + 9
+        );
+      }
+
+      context.textAlign = "right";
+      context.textBaseline = "middle";
+
+      const yTickNumber = 6;
+      const yRange = plot.yMaximum - plot.yMinimum;
+
+      for (let i = 0; i <= yTickNumber; i++) {
+        const value =
+          plot.yMinimum + yRange * i / yTickNumber;
+
+        const pixelY = yToPixel(
+          value,
+          plot.yMinimum,
+          plot.yMaximum,
+          plot.top,
+          plot.bottom
+        );
+
+        context.beginPath();
+        context.moveTo(plot.left - 6, pixelY);
+        context.lineTo(plot.left, pixelY);
+        context.stroke();
+
+        context.fillText(
+          formatTick(value, yRange),
+          plot.left - 10,
+          pixelY
+        );
+      }
+
+      if (
+        plot.yMinimum < 0 &&
+        plot.yMaximum > 0
+      ) {
+        const zeroY = yToPixel(
+          0,
+          plot.yMinimum,
+          plot.yMaximum,
+          plot.top,
+          plot.bottom
+        );
+
+        context.save();
+        context.strokeStyle = "#9a9a9a";
+        context.lineWidth = 0.8;
+        context.setLineDash([4, 4]);
+        context.beginPath();
+        context.moveTo(plot.left, zeroY);
+        context.lineTo(plot.right, zeroY);
+        context.stroke();
+        context.restore();
+      }
+
+      context.font = "bold 19px Calibri, Arial, sans-serif";
+      context.textAlign = "center";
+      context.textBaseline = "top";
+      context.fillText(
+        title,
+        (plot.left + plot.right) / 2,
+        10
+      );
+
+      context.font = "16px Calibri, Arial, sans-serif";
+      context.fillText(
+        xLabel,
+        (plot.left + plot.right) / 2,
+        height - 29
+      );
+
+      context.save();
+      context.translate(
+        20,
+        (plot.top + plot.bottom) / 2
+      );
+
+      context.rotate(-Math.PI / 2);
+      context.textAlign = "center";
+      context.textBaseline = "top";
+      context.fillText(yLabel, 0, 0);
+      context.restore();
+
+      context.restore();
+    }
+
+
+    function drawLegend(context, plot, hasEnvelope) {
+      if (!hasEnvelope) {
+        return;
+      }
+
+      const legendWidth = 145;
+      const legendHeight = 34;
+      const x = plot.right - legendWidth - 12;
+      const y = plot.top + 12;
+
+      context.save();
+
+      context.fillStyle = "rgba(255, 255, 255, 0.92)";
+      context.strokeStyle = "#156082";
+      context.lineWidth = 1;
+
+      context.fillRect(
+        x,
+        y,
+        legendWidth,
+        legendHeight
+      );
+
+      context.strokeRect(
+        x,
+        y,
+        legendWidth,
+        legendHeight
+      );
+
+      context.strokeStyle = "#156082";
+      context.lineWidth = 2;
+      context.setLineDash([7, 5]);
+
+      context.beginPath();
+      context.moveTo(x + 10, y + 17);
+      context.lineTo(x + 45, y + 17);
+      context.stroke();
+
+      context.setLineDash([]);
+      context.fillStyle = "#156082";
+      context.font = "14px Calibri, Arial, sans-serif";
+      context.textAlign = "left";
+      context.textBaseline = "middle";
+      context.fillText("Envelope", x + 55, y + 17);
+
+      context.restore();
+    }
+
+
+    function drawWavePlot(
+      canvas,
+      xValues,
+      resultWave,
+      components,
+      envelope,
+      title,
+      xLimit,
+      showComponents,
+      showEnvelope
+    ) {
+      const canvasSetup = setupCanvas(canvas);
+      const context = canvasSetup.context;
+      const width = canvasSetup.width;
+      const height = canvasSetup.height;
+
+      const arraysForScale = [resultWave];
+
+      if (showEnvelope && envelope) {
+        arraysForScale.push(envelope);
+      }
+
+      if (showComponents && components.length > 0) {
+        arraysForScale.push(...components);
+      }
+
+      const maximumAbsoluteValue =
+        findMaximumAbsoluteValue(arraysForScale);
+
+      const yMaximum = maximumAbsoluteValue * 1.15;
+
+      const plot = {
+        left: 82,
+        right: width - 25,
+        top: 55,
+        bottom: height - 63,
+        xMinimum: -xLimit,
+        xMaximum: xLimit,
+        yMinimum: -yMaximum,
+        yMaximum: yMaximum
+      };
+
+      drawAxes(
+        context,
+        width,
+        height,
+        plot,
+        title,
+        "Position, x",
+        "Wave amplitude"
+      );
+
+      if (
+        showComponents &&
+        components.length > 0
+      ) {
+        components.forEach((component, index) => {
+          const hue =
+            Math.round(260 * index / components.length);
+
+          drawPolyline(
+            context,
+            xValues,
+            component,
+            plot,
+            `hsla(${hue}, 65%, 45%, 0.30)`,
+            1,
+            []
+          );
+        });
+      }
+
+      drawPolyline(
+        context,
+        xValues,
+        resultWave,
+        plot,
+        "black",
+        2.2,
+        []
+      );
+
+      if (
+        showEnvelope &&
+        envelope !== null
+      ) {
+        drawPolyline(
+          context,
+          xValues,
+          envelope,
+          plot,
+          "#156082",
+          2,
+          [7, 5]
+        );
+
+        drawPolyline(
+          context,
+          xValues,
+          envelope.map(value => -value),
+          plot,
+          "#156082",
+          2,
+          [7, 5]
+        );
+
+        drawLegend(context, plot, true);
+      }
+    }
+
+
+    function drawSquaredPlot(
+      canvas,
+      xValues,
+      squaredAmplitude,
+      xLimit
+    ) {
+      const canvasSetup = setupCanvas(canvas);
+      const context = canvasSetup.context;
+      const width = canvasSetup.width;
+      const height = canvasSetup.height;
+
+      let maximum = Math.max(...squaredAmplitude);
+
+      if (maximum <= 0) {
+        maximum = 1;
+      }
+
+      const plot = {
+        left: 82,
+        right: width - 25,
+        top: 55,
+        bottom: height - 63,
+        xMinimum: -xLimit,
+        xMaximum: xLimit,
+        yMinimum: 0,
+        yMaximum: maximum * 1.12
+      };
+
+      drawAxes(
+        context,
+        width,
+        height,
+        plot,
+        "Squared Wave Amplitude",
+        "Position, x",
+        "|ψ(x)|²"
+      );
+
+      drawPolyline(
+        context,
+        xValues,
+        squaredAmplitude,
+        plot,
+        "#156082",
+        2.2,
+        []
+      );
+    }
+
+
+    function updateControlLabels() {
+      elements.amplitudeValue.textContent =
+        Number(elements.amplitude.value).toFixed(1);
+
+      elements.wavelengthValue.textContent =
+        Number(elements.wavelength.value).toFixed(1);
+
+      elements.deltaLambdaValue.textContent =
+        Number(elements.deltaLambda.value).toFixed(2);
+
+      elements.numberWavesValue.textContent =
+        elements.numberWaves.value;
+
+      elements.xLimitValue.textContent =
+        elements.xLimit.value;
+    }
+
+
+    function updateApp() {
+      const plotType = elements.plotType.value;
+      const amplitude = Number(elements.amplitude.value);
+      const wavelength = Number(elements.wavelength.value);
+      const numberWaves = Number(elements.numberWaves.value);
+      const xLimit = Number(elements.xLimit.value);
+
+      const maximumBandwidth =
+        Math.min(10, 1.8 * wavelength);
+
+      elements.deltaLambda.max =
+        maximumBandwidth.toFixed(2);
+
+      if (
+        Number(elements.deltaLambda.value) >
+        maximumBandwidth
+      ) {
+        elements.deltaLambda.value =
+          maximumBandwidth.toFixed(2);
+      }
+
+      const deltaLambda =
+        Number(elements.deltaLambda.value);
+
+      updateControlLabels();
+
+      const xValues = linspace(
+        -xLimit,
+        xLimit,
+        4000
+      );
+
+      let resultWave = [];
+      let components = [];
+      let envelope = null;
+      let title = "";
+      let equation = "";
+
+      if (plotType === "single") {
+        resultWave = generateWave(
+          amplitude,
+          wavelength,
+          xValues
+        );
+
+        title = "Single Monochromatic Wave";
+        equation = "ψ(x) = A cos(2πx/λ₀)";
+      }
+
+      if (plotType === "two") {
+        const componentWavelengths =
+          createWavelengths(
+            wavelength,
+            deltaLambda,
+            2
+          );
+
+        components = componentWavelengths.map(
+          componentWavelength =>
+            generateWave(
+              amplitude,
+              componentWavelength,
+              xValues
+            )
+        );
+
+        resultWave = sumArrays(components);
+
+        if (elements.normalizeSum.checked) {
+          resultWave = divideArray(resultWave, 2);
+        }
+
+        title = "Two-Wave Superposition";
+        equation = "ψ(x) = Σᵢ₌₁² A cos(2πx/λᵢ)";
+      }
+
+      if (plotType === "nwave") {
+        const componentWavelengths =
+          createWavelengths(
+            wavelength,
+            deltaLambda,
+            numberWaves
+          );
+
+        components = componentWavelengths.map(
+          componentWavelength =>
+            generateWave(
+              amplitude,
+              componentWavelength,
+              xValues
+            )
+        );
+
+        resultWave = sumArrays(components);
+
+        if (elements.normalizeSum.checked) {
+          resultWave = divideArray(
+            resultWave,
+            numberWaves
+          );
+        }
+
+        title =
+          `Superposition of ${numberWaves} Waves`;
+
+        equation =
+          "ψ(x) = Σᵢ₌₁ᴺ A cos(2πx/λᵢ)";
+      }
+
+      if (plotType === "sinc") {
+        const carrier = generateWave(
+          1,
+          wavelength,
+          xValues
+        );
+
+        envelope = sincEnvelope(
+          amplitude,
+          deltaLambda,
+          wavelength,
+          xValues
+        );
+
+        resultWave = multiplyArrays(
+          carrier,
+          envelope
+        );
+
+        title = "Sinc-Modulated Wave Packet";
+
+        equation =
+          "ψ(x) = A sinc(Δλx/λ₀²) cos(2πx/λ₀)";
+      }
+
+      if (plotType === "gaussian") {
+        const carrier = generateWave(
+          1,
+          wavelength,
+          xValues
+        );
+
+        envelope = gaussianEnvelope(
+          amplitude,
+          deltaLambda,
+          wavelength,
+          xValues
+        );
+
+        resultWave = multiplyArrays(
+          carrier,
+          envelope
+        );
+
+        title = "Gaussian-Modulated Wave Packet";
+
+        equation =
+          "ψ(x) = A exp[−2(πΔλx/λ₀²)²] cos(2πx/λ₀)";
+      }
+
+      const isSuperposition =
+        plotType === "two" ||
+        plotType === "nwave";
+
+      const isModulated =
+        plotType === "sinc" ||
+        plotType === "gaussian";
+
+      elements.numberWavesControl.style.display =
+        plotType === "nwave" ? "block" : "none";
+
+      elements.showComponents.disabled =
+        !isSuperposition;
+
+      elements.normalizeSum.disabled =
+        !isSuperposition;
+
+      elements.showEnvelope.disabled =
+        !isModulated;
+
+      const lambdaMinimum =
+        wavelength - deltaLambda / 2;
+
+      const lambdaMaximum =
+        wavelength + deltaLambda / 2;
+
+      const kMinimum =
+        2 * Math.PI / lambdaMaximum;
+
+      const kMaximum =
+        2 * Math.PI / lambdaMinimum;
+
+      const deltaK =
+        kMaximum - kMinimum;
+
+      const approximateDeltaK =
+        2 *
+        Math.PI *
+        deltaLambda /
+        Math.pow(wavelength, 2);
+
+      const characteristicWidth =
+        1 / deltaK;
+
+      const relativeBandwidth =
+        deltaLambda / wavelength;
+
+      const cyclesWithinWidth =
+        characteristicWidth / wavelength;
+
+      elements.relativeBandwidth.textContent =
+        relativeBandwidth.toFixed(3);
+
+      elements.deltaK.textContent =
+        deltaK.toFixed(4);
+
+      elements.characteristicWidth.textContent =
+        characteristicWidth.toFixed(3);
+
+      elements.cyclesWithinWidth.textContent =
+        cyclesWithinWidth.toFixed(3);
+
+      elements.calculationValues.innerHTML =
+        `<strong>Exact Δk:</strong>
+         ${deltaK.toFixed(6)}
+         <br>
+         <strong>Small-bandwidth approximation:</strong>
+         ${approximateDeltaK.toFixed(6)}`;
+
+      elements.plotHeading.textContent = title;
+      elements.equation.textContent = equation;
+
+      drawWavePlot(
+        elements.waveCanvas,
+        xValues,
+        resultWave,
+        components,
+        envelope,
+        title,
+        xLimit,
+        elements.showComponents.checked &&
+          isSuperposition,
+        elements.showEnvelope.checked &&
+          isModulated
+      );
+
+      if (elements.showSquared.checked) {
+        elements.squaredSection.style.display =
+          "block";
+
+        const squaredAmplitude =
+          resultWave.map(value => value * value);
+
+        drawSquaredPlot(
+          elements.squaredCanvas,
+          xValues,
+          squaredAmplitude,
+          xLimit
+        );
+      } else {
+        elements.squaredSection.style.display =
+          "none";
+      }
+    }
+
+
+    function downloadCanvas(canvas, filename) {
+      const link = document.createElement("a");
+
+      link.download = filename;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+
+    const interactiveControls = [
+      elements.plotType,
+      elements.amplitude,
+      elements.wavelength,
+      elements.deltaLambda,
+      elements.numberWaves,
+      elements.showComponents,
+      elements.showEnvelope,
+      elements.normalizeSum,
+      elements.showSquared,
+      elements.xLimit
+    ];
+
+    interactiveControls.forEach(control => {
+      control.addEventListener("input", updateApp);
+      control.addEventListener("change", updateApp);
+    });
+
+    elements.downloadWaveButton.addEventListener(
+      "click",
+      () => downloadCanvas(
+        elements.waveCanvas,
+        "wave-packet.png"
+      )
+    );
+
+    elements.downloadSquaredButton.addEventListener(
+      "click",
+      () => downloadCanvas(
+        elements.squaredCanvas,
+        "wave-packet-squared-amplitude.png"
+      )
+    );
+
+    let resizeTimer;
+
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+
+      resizeTimer = setTimeout(
+        updateApp,
+        150
+      );
+    });
+
+    updateApp();
+  </script>
+</body>
+</html>
